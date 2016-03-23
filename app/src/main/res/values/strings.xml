@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Shopping</string>
+    <string name="in_stock_label">In Stock.</string>
+    <string name="product_list_label">Product List</string>
+</resources>
