@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import com.test.shopping.R;
+import com.test.shopping.model.CacheUtil;
+import com.test.shopping.model.ProductDataModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,19 +75,18 @@ public class ItemDetailActivity extends FragmentActivity {
      * sequence.
      */
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
-        List mUrlList = new ArrayList<String>(Arrays.asList(MainActivity.IMAGE_URLS));
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int position) {
-            return ScreenSlidePageFragment.create(ItemDetailActivity.this, mUrlList.size(), (String)mUrlList.get(position));
+            return ScreenSlidePageFragment.create(ItemDetailActivity.this, 0, position);
         }
 
         @Override
         public int getCount() {
-            return mUrlList.size();
+            return CacheUtil.getInstance().getProductListSize();
         }
     }
 

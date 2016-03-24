@@ -10,7 +10,7 @@ import android.widget.ImageView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.test.shopping.R;
-import com.test.shopping.connectionmodule.ImageLoaderUtil;
+import com.test.shopping.connectionmodule.ConnectionUtil;
 import com.test.shopping.view.ItemDetailActivity;
 
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class GridAdapter extends BaseAdapter {
 //
 //        ImageView image = (ImageView) view.findViewById(R.id.image);
 //
-//        ImageLoader loader = ImageLoaderUtil.getInstance(mContext.getApplicationContext()).getImageLoader();
+//        ImageLoader loader = ConnectionUtil.getInstance(mContext.getApplicationContext()).getImageLoader();
 //        loader.get(mUrlList.get(position), ImageLoader.getImageListener(image,
 //                R.mipmap.ic_launcher, R.mipmap.ic_launcher));
 //        return view;
@@ -87,11 +87,11 @@ public class GridAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-        ImageLoader loader = ImageLoaderUtil.getInstance(mContext.getApplicationContext()).getImageLoader();
+        ImageLoader loader = ConnectionUtil.getInstance(mContext.getApplicationContext()).getImageLoader();
         loader.get(mUrlList.get(position), ImageLoader.getImageListener(imageView,
                 R.mipmap.ic_launcher, R.mipmap.ic_launcher));
 
-//        ImageLoaderUtil.getInstance(mContext.getApplicationContext()).getImageLoader().
+//        ConnectionUtil.getInstance(mContext.getApplicationContext()).getImageLoader().
 
 //        imageView.setImageResource(mThumbIds[position]);
 

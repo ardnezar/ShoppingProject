@@ -7,11 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.test.shopping.R;
-import com.test.shopping.connectionmodule.ImageLoaderUtil;
+import com.test.shopping.connectionmodule.ConnectionUtil;
+import com.test.shopping.model.CacheUtil;
+import com.test.shopping.model.ProductDataModel;
 import com.test.shopping.view.ItemDetailActivity;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,23 +25,20 @@ import java.util.Arrays;
  * Created by sd250307 on 3/9/16.
  */
 public class ListAdapter extends BaseAdapter {
-
-    private ArrayList<String> mUrlList;
     private Context mContext;
 
-    public ListAdapter(Context ctx, String[] list) {
-        mUrlList = new ArrayList<String>(Arrays.asList(list));
+    public ListAdapter(Context ctx) {
         mContext = ctx;
     }
 
     @Override
     public int getCount() {
-        return mUrlList.size();
+        return CacheUtil.getInstance().getProductListSize();
     }
 
     @Override
     public Object getItem(int position) {
-        return mUrlList.get(position);
+        return CacheUtil.getInstance().getProductId(position);
     }
 
     @Override
@@ -50,63 +52,27 @@ public class ListAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item, null);
         }
 
-        ImageView image = (ImageView) convertView.findViewById(R.id.image);
+        String productId = CacheUtil.getInstance().getProductId(position);
+        ProductDataModel product = CacheUtil.getInstance().getProduct(productId);
 
-        ImageLoader loader = ImageLoaderUtil.getInstance(mContext.getApplicationContext()).getImageLoader();
-        loader.get(mUrlList.get(position), ImageLoader.getImageListener(image,
+        TextView productName = (TextView) convertView.findViewById(R.id.product_name);
+        productName.setText(StringEscapeUtils.unescapeJava(product.getProductName()));
+
+        TextView price = (TextView) convertView.findViewById(R.id.price);
+        price.setText(product.getPrice());
+
+        ImageView image = (ImageView) convertView.findViewById(R.id.image);
+        ImageLoader loader = ConnectionUtil.getInstance(mContext.getApplicationContext()).getImageLoader();
+        loader.get(product.getProductImage(), ImageLoader.getImageListener(image,
                 R.mipmap.ic_launcher, R.mipmap.ic_launcher));
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                mUrlList.get(position)
                 Intent intent = new Intent(mContext, ItemDetailActivity.class);
                 intent.putExtra(ItemDetailActivity.ITEM_INDEX, position);
                 mContext.startActivity(intent);
             }
         });
         return convertView;
-
-//        Iterator<String> iter = mUrlList.iterator();
-//
-//        while(iter.hasNext()) {
-//            iter.next();
-//        }
-//
-//        Map<Integer, String> map = new HashMap<>();
-//        Iterator <Map.Entry<Integer, String>>  it = map.entrySet().iterator();
-//
-//
-//
-//        GridView grid = (GridView)parent;
-//        int size = grid.getRequestedColumnWidth();
-//
-//
-//        ImageView imageView;
-//        if (convertView == null) {
-//            // if it's not recycled, initialize some attributes
-//            imageView = new ImageView(mContext);
-//            imageView.setLayoutParams(new GridView.LayoutParams(size, size));
-//            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//            imageView.setPadding(4, 4, 4, 4);
-//        } else {
-//            imageView = (ImageView) convertView;
-//        }
-//
-//        ImageLoader loader = ImageLoaderUtil.getInstance(mContext.getApplicationContext()).getImageLoader();
-//        loader.get(mUrlList.get(position), ImageLoader.getImageListener(imageView,
-//                R.mipmap.ic_launcher, R.mipmap.ic_launcher));
-//
-////        ImageLoaderUtil.getInstance(mContext.getApplicationContext()).getImageLoader().
-//
-////        imageView.setImageResource(mThumbIds[position]);
-//
-//        imageView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-////                mUrlList.get(position)
-//                mContext.startActivity(new Intent(mContext, ItemDetailActivity.class));
-//            }
-//        });
-//        return imageView;
     }
 }

@@ -4,7 +4,7 @@ package com.test.shopping.model;
  * Created by sujoy on 3/22/16.
  * This model describes each Item
  */
-public class ItemModel {
+public class ProductDataModel {
 
 
     public String getProductId() {
@@ -31,7 +31,7 @@ public class ItemModel {
         return mProductImage;
     }
 
-    public float getReviewRating() {
+    public double getReviewRating() {
         return mReviewRating;
     }
 
@@ -49,19 +49,27 @@ public class ItemModel {
     private String mLongDescription;
     private String mPrice;
     private String mProductImage;
-    private float mReviewRating;
+    private double mReviewRating;
     private int mReviewCount;
     private boolean mInStock;
 
-    public ItemModel(String productId,
-                     String prodName,
-                     String shortDes,
-                     String longDes,
-                     String price,
-                     String image,
-                     float rating,
-                     int count,
-                     boolean stock) {
-
+    public ProductDataModel(String productId,
+                            String prodName,
+                            String shortDes,
+                            String longDes,
+                            String price,
+                            String image,
+                            double rating,
+                            int count,
+                            boolean stock) {
+        mProductId = productId;
+        mProductName = prodName;
+        mShortDescription = shortDes;
+        mLongDescription = longDes;
+        mPrice = price;
+        mProductImage = image;
+        mReviewRating = rating;
+        mReviewCount = count;
+        mInStock = stock;
     }
 }

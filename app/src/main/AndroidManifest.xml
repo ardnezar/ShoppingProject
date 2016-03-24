@@ -10,14 +10,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.test.shopping.view.MainActivity">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
+        <activity android:name="com.test.shopping.view.MainActivity"
+            android:configChanges="orientation|keyboardHidden">
         </activity>
         <activity
             android:name="com.test.shopping.view.SplashActivity"
@@ -28,7 +22,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.test.shopping.view.ItemDetailActivity">
+        <activity android:name="com.test.shopping.view.ItemDetailActivity"
+            android:configChanges="orientation|keyboardHidden">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

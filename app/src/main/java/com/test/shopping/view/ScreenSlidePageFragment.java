@@ -23,10 +23,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.test.shopping.connectionmodule.ImageLoaderUtil;
+import com.test.shopping.connectionmodule.ConnectionUtil;
 import com.test.shopping.R;
+import com.test.shopping.model.CacheUtil;
+import com.test.shopping.model.ProductDataModel;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 /**
  * A fragment representing a single step in a wizard. The fragment shows a dummy title indicating
@@ -42,7 +49,7 @@ public class ScreenSlidePageFragment extends Fragment {
     /**
      * The fragment's page number, which is set to the argument value for {@link #ARG_PAGE}.
      */
-    private String  mImageUrl;
+    private int  mPosition;
 
     private static int mTotal;
 
@@ -51,10 +58,10 @@ public class ScreenSlidePageFragment extends Fragment {
     /**
      * Factory method for this fragment class. Constructs a new fragment for the given page number.
      */
-    public static ScreenSlidePageFragment create(Context context, int total, String url) {
+    public static ScreenSlidePageFragment create(Context context, int total, int position) {
         ScreenSlidePageFragment fragment = new ScreenSlidePageFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PAGE, url);
+        args.putInt(ARG_PAGE, position);
         fragment.setArguments(args);
         mTotal = total;
         sContext = context;
@@ -67,28 +74,45 @@ public class ScreenSlidePageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mImageUrl = getArguments().getString(ARG_PAGE);
+        mPosition = getArguments().getInt(ARG_PAGE);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         // Inflate the layout containing a title and body text.
+
+        ProductDataModel product = CacheUtil.getInstance().getProduct(CacheUtil.getInstance().getProductId(mPosition));
+
+
         ViewGroup rootView = (ViewGroup) inflater
                 .inflate(R.layout.product_item, container, false);
 
+
+        TextView productName = (TextView) rootView.findViewById(R.id.product_name);
+        productName.setText(StringEscapeUtils.unescapeJava(product.getProductName()));
+
+        String shortDes = product.getShortDescription();
+
+        if(shortDes != null && shortDes.length() > 0) {
+            TextView shortDesc = (TextView) rootView.findViewById(R.id.product_short_desc);
+            shortDesc.setText(Jsoup.clean(shortDes,Whitelist.simpleText()));
+        }
+
+        String longDes = product.getLongDescription();
+
+        if(longDes != null && longDes.length() > 0) {
+            TextView longDesc = (TextView) rootView.findViewById(R.id.long_description);
+            longDesc.setText(Jsoup.clean(longDes, Whitelist.simpleText()));
+        }
+
+        TextView price = (TextView) rootView.findViewById(R.id.price);
+        price.setText(product.getPrice());
+
         ImageView imageView = (ImageView) rootView.findViewById(R.id.image);
-
-
-        ImageLoader loader = ImageLoaderUtil.getInstance(sContext).getImageLoader();
-        loader.get(mImageUrl, ImageLoader.getImageListener(imageView,
+        ImageLoader loader = ConnectionUtil.getInstance(sContext).getImageLoader();
+        loader.get(product.getProductImage(), ImageLoader.getImageListener(imageView,
                 R.mipmap.ic_launcher, R.mipmap.ic_launcher));
-
-        // Set the title view to show the page number.
-//        ((TextView) rootView.findViewById(android.R.id.text1)).setText(
-//                getString(R.string.app_name, mPageNumber + 1));
-
-
 
         return rootView;
     }
