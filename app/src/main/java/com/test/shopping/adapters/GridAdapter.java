@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import com.android.volley.toolbox.ImageLoader;
 import com.test.shopping.R;
 import com.test.shopping.connectionmodule.ConnectionUtil;
+import com.test.shopping.model.CacheUtil;
+import com.test.shopping.model.ProductDataModel;
 import com.test.shopping.view.ItemDetailActivity;
 
 import java.util.ArrayList;
@@ -27,19 +29,18 @@ public class GridAdapter extends BaseAdapter {
     private ArrayList<String> mUrlList;
     private Context mContext;
 
-    public GridAdapter(Context ctx, String[] list) {
-        mUrlList = new ArrayList<String>(Arrays.asList(list));
+    public GridAdapter(Context ctx) {
         mContext = ctx;
     }
 
     @Override
     public int getCount() {
-        return mUrlList.size();
+        return CacheUtil.getInstance().getProductListSize();
     }
 
     @Override
     public Object getItem(int position) {
-        return mUrlList.get(position);
+        return CacheUtil.getInstance().getProductId(position);
     }
 
     @Override
@@ -61,16 +62,17 @@ public class GridAdapter extends BaseAdapter {
 //                R.mipmap.ic_launcher, R.mipmap.ic_launcher));
 //        return view;
 
-        Iterator<String> iter = mUrlList.iterator();
+//        Iterator<String> iter = mUrlList.iterator();
+//
+//        while(iter.hasNext()) {
+//            iter.next();
+//        }
+//
+//        Map<Integer, String> map = new HashMap<>();
+//        Iterator <Map.Entry<Integer, String>>  it = map.entrySet().iterator();
 
-        while(iter.hasNext()) {
-            iter.next();
-        }
-
-        Map<Integer, String> map = new HashMap<>();
-        Iterator <Map.Entry<Integer, String>>  it = map.entrySet().iterator();
-
-
+        String productId = CacheUtil.getInstance().getProductId(position);
+        ProductDataModel product = CacheUtil.getInstance().getProduct(productId);
 
         GridView grid = (GridView)parent;
         int size = grid.getRequestedColumnWidth();
@@ -88,7 +90,7 @@ public class GridAdapter extends BaseAdapter {
         }
 
         ImageLoader loader = ConnectionUtil.getInstance(mContext.getApplicationContext()).getImageLoader();
-        loader.get(mUrlList.get(position), ImageLoader.getImageListener(imageView,
+        loader.get(product.getProductImage(), ImageLoader.getImageListener(imageView,
                 R.mipmap.ic_launcher, R.mipmap.ic_launcher));
 
 //        ConnectionUtil.getInstance(mContext.getApplicationContext()).getImageLoader().
