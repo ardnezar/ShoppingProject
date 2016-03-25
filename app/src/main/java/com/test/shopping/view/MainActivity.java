@@ -1,28 +1,29 @@
 package com.test.shopping.view;
 
-import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
+//import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.GridView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
-import com.test.shopping.adapters.*;
-//import com.test.gridproject.ListAdapter;
 import com.test.shopping.R;
-import com.test.shopping.connectionmodule.ConnectionUtil;
-import com.test.shopping.connectionmodule.WebHandlerRequestCallback;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "ProductMain";
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-            setContentView(R.layout.main);
+        setContentView(R.layout.main);
+        toolbar = (Toolbar) findViewById(R.id.tool_bar); // Attaching the layout to the toolbar object
+//        setSupportActionBar(toolbar);
+        Fragment newFragment = new MainFragment();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.add(R.id.list_frag, newFragment).commit();
     }
 
     @Override

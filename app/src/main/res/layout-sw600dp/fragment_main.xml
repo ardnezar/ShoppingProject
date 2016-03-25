@@ -21,13 +21,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/item_page_left_padding"
+            android:layout_marginTop="@dimen/item_margin"
             android:orientation="vertical">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:layout_marginLeft="@dimen/item_page_left_padding"
+                android:layout_marginLeft="@dimen/item_margin"
                 android:text="@string/product_list_label"
                 android:textSize="@dimen/availability_size"
                 android:textColor="@android:color/holo_blue_dark" />

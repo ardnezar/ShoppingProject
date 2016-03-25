@@ -11,59 +11,33 @@ import android.support.v7.widget.Toolbar;
 
 import com.test.shopping.R;
 import com.test.shopping.model.CacheUtil;
-import com.test.shopping.model.ProductDataModel;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class ItemDetailActivity extends FragmentActivity {
 
-    /**
-     * The number of pages (wizard steps) to show in this demo.
-     */
-    private static final int NUM_PAGES = 5;
     public static final String ITEM_INDEX = "item_index";
 
-    /**
-     * The pager widget, which handles animation and allows swiping horizontally to access previous
-     * and next wizard steps.
-     */
     private ViewPager mPager;
 
-    /**
-     * The pager adapter, which provides the pages to the view pager widget.
-     */
+    private Toolbar toolbar;
+
+
     private PagerAdapter mPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_detail);
+        toolbar = (Toolbar) findViewById(R.id.tool_bar); // Attaching the layout to the toolbar object
+//        setSupportActionBar(toolbar);
 
-        // my_child_toolbar is defined in the layout file
-        Toolbar myChildToolbar =
-                (Toolbar) findViewById(R.id.my_child_toolbar);
-//        setSupportActionBar(myChildToolbar);
-
-        // Get a support ActionBar corresponding to this toolbar
-//        ActionBar ab = getSupportActionBar();
-
-        // Enable the Up button
-//        ab.setDisplayHomeAsUpEnabled(true);
         int index = getIntent().getIntExtra(ITEM_INDEX, 0);
 
-        // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.pager);
-        mPagerAdapter = new ScreenSlidePagerAdapter(this.getSupportFragmentManager());
+        mPagerAdapter = new ItemDetailPagerAdapter(this.getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
         mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                // When changing pages, reset the action bar actions since they are dependent
-                // on which page is currently active. An alternative approach is to have each
-                // fragment expose actions itself (rather than the activity exposing actions),
-                // but for simplicity, the activity provides the actions in this sample.
                 invalidateOptionsMenu();
             }
         });
@@ -71,17 +45,17 @@ public class ItemDetailActivity extends FragmentActivity {
     }
 
     /**
-     * A simple pager adapter that represents 5 {@link ScreenSlidePageFragment} objects, in
-     * sequence.
+     * A pager adapter creates a fragment and shows the product details.
+     * To be done: Recycling the frames in the pager adapter
      */
-    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
-        public ScreenSlidePagerAdapter(FragmentManager fm) {
+    private class ItemDetailPagerAdapter extends FragmentStatePagerAdapter {
+        public ItemDetailPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int position) {
-            return ScreenSlidePageFragment.create(ItemDetailActivity.this, 0, position);
+            return ItemDetailFragment.create(ItemDetailActivity.this, position);
         }
 
         @Override

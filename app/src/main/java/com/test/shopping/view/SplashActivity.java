@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 public class SplashActivity extends AppCompatActivity {
 
+    //Delay the Splash page for 3 seconds
     private static final int SPLASH_DELAY = 3000;
 
     private static final int START_MESSAGE = 1001;
@@ -16,9 +17,6 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Intent intent = new Intent(this, MainActivity.class);
-//        startActivity(intent);
-//        finish();
     }
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {

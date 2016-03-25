@@ -2,6 +2,7 @@ package com.test.shopping.connectionmodule;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.util.LruCache;
 
 import com.android.volley.Request;
@@ -9,6 +10,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.test.shopping.AppConstants;
+import com.test.shopping.BuildConfig;
 
 /**
  * Created by sd250307 on 3/9/16.
@@ -20,6 +22,8 @@ public class ConnectionUtil {
     private Context mContext;
     private int mCurrentPage;
     private int mTotalProducts;
+
+    private static final String TAG = "ShoppingConnectionUtil";
 
     public static final int MAX_PAGE_SIZE =  30;
 
@@ -42,7 +46,7 @@ public class ConnectionUtil {
                         cache.put(url, bitmap);
                     }
                 });
-        mCurrentPage = 1;
+        mCurrentPage = 0;
     }
 
     public static synchronized ConnectionUtil getInstance(Context context) {
@@ -54,21 +58,13 @@ public class ConnectionUtil {
 
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
-            // getApplicationContext() is key, it keeps you from leaking the
-            // Activity or BroadcastReceiver if someone passes one in.
             mRequestQueue = Volley.newRequestQueue(mContext.getApplicationContext());
         }
         return mRequestQueue;
     }
 
-    public <T> void addToRequestQueue(Request<T> req) {
-        getRequestQueue().add(req);
-    }
-
-    public void cleanup() {
-        if(mRequestQueue != null) {
-            mRequestQueue.stop();
-        }
+    public void updateCurrent(int pageNumber) {
+        mCurrentPage = pageNumber;
     }
 
     public ImageLoader getImageLoader() {
@@ -77,7 +73,8 @@ public class ConnectionUtil {
 
     public void sendProductRequest(WebHandlerRequestCallback callback) {
         String url = AppConstants.URL_BASE_DEBUG + AppConstants.PRODUCT_LIST;
-        url = String.format(url, AppConstants.API_KEY, mCurrentPage, MAX_PAGE_SIZE);
+        url = String.format(url, AppConstants.API_KEY, ++mCurrentPage, MAX_PAGE_SIZE);
+        if(BuildConfig.DEBUG)Log.d(TAG, "sendProductRequest..url:"+url);
         ProductPageRequest request = new ProductPageRequest(
                 url,
                 new ProductPageRequestListener(mContext, callback),

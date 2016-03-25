@@ -12,7 +12,7 @@
         <!--android:elevation="4dp"-->
         <!--android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
         <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>-->
-    <fragment class="com.test.shopping.view.MainTabletFragment"
+    <FrameLayout
         android:id="@+id/list_frag"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

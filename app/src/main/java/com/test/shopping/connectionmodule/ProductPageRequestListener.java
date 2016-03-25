@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.android.volley.VolleyError;
+import com.test.shopping.BuildConfig;
 import com.test.shopping.model.CacheUtil;
 import com.test.shopping.model.ProductDataModel;
 
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by sdas on 9/23/15.
+ * Created by sdas on 3/23/16.
  */
 public class ProductPageRequestListener implements com.android.volley.Response.Listener, com.android.volley.Response.ErrorListener {
 
@@ -25,7 +26,7 @@ public class ProductPageRequestListener implements com.android.volley.Response.L
 
     private WebHandlerRequestCallback mDataCallback;
 
-    // Product based nodes as returned by Paroduct Page API
+    // Product based nodes as returned by Product Page API
 
     private static final String TAG_PRODUCTS = "products";
     private static final String TAG_PRODUCT_ID = "productId";
@@ -55,17 +56,7 @@ public class ProductPageRequestListener implements com.android.volley.Response.L
 
     @Override
     public void onResponse(Object response) {
-        Log.d(TAG, "onResponse..response:" + response);
-        ContentValues values = new ContentValues();
-
-        Uri mNewUri;
-
-        HashMap<Integer, Integer> em = new HashMap<>();
-        JSONArray options = null;
-        ArrayList<MenuItemData> menuItems = new ArrayList<>();
-        String sessionId = null;
-
-        boolean canContact = true;
+        if(BuildConfig.DEBUG)Log.d(TAG, "onResponse..response:" + response);
 
         if(response != null) {
             String resp = (String)response;
@@ -77,7 +68,6 @@ public class ProductPageRequestListener implements com.android.volley.Response.L
 
                     //Loop through all the products
                     for (int i = 0; i < products.length(); i++) {
-                        menuItems.clear();
                         JSONObject c = products.getJSONObject(i);
 
                         String productName = null;
@@ -110,9 +100,6 @@ public class ProductPageRequestListener implements com.android.volley.Response.L
                             count = c.getInt(TAG_REVIEW_COUNT);
                             inStock = c.getBoolean(TAG_IN_STOCK);
 
-                        /*
-                        * To be done...do we need a factory here
-                        */
                             ProductDataModel product = new ProductDataModel(productId,
                                     productName,
                                     shortDesc,
@@ -124,24 +111,21 @@ public class ProductPageRequestListener implements com.android.volley.Response.L
                                     inStock);
 
 
-                            //Insert Product details in Product Cache
-
+                            CacheUtil.getInstance().addProductId(productId);
+                            /*
+                             * Insert Product details in Product Cache
+                             */
                             if (product != null) {
                                 CacheUtil.getInstance().addProduct(productId, product);
                             }
 
-                            CacheUtil.getInstance().addProductId(productId);
 
-                            //Insert Product Id in Product array
                         }
                     }
                 }
-                //Handle to page wide json response
 
-
-                //Finally update the hashmaps
-
-//                Utilities.updateSharedPreferencesCanContact(mContext, canContact);
+                int pageNumber = jsonObj.getInt(TAG_PAGE_NUMBER);
+                ConnectionUtil.getInstance(mContext).updateCurrent(pageNumber);
             } catch (JSONException e) {
                 e.printStackTrace();
             } finally {
@@ -152,14 +136,7 @@ public class ProductPageRequestListener implements com.android.volley.Response.L
 
     @Override
     public void onErrorResponse(VolleyError volleyError) {
-        Log.d(TAG, "onErrorResponse..volleyError:"+volleyError.networkResponse.statusCode);
+        if(BuildConfig.DEBUG)Log.d(TAG, "onErrorResponse..volleyError:"+volleyError.networkResponse.statusCode);
         mDataCallback.updateError();
-    }
-
-    private class MenuItemData {
-        String label;
-        int index;
-        int value;
-        String url;
     }
 }

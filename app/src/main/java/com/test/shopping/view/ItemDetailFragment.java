@@ -19,10 +19,13 @@ package com.test.shopping.view;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -36,39 +39,27 @@ import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
 /**
- * A fragment representing a single step in a wizard. The fragment shows a dummy title indicating
- * the page number, along with some dummy text.
+ * A fragment representing a single page in the view pager showing details of each item.
  *
  */
-public class ScreenSlidePageFragment extends Fragment {
-    /**
-     * The argument key for the page number this fragment represents.
-     */
+public class ItemDetailFragment extends Fragment {
+
     public static final String ARG_PAGE = "page";
 
-    /**
-     * The fragment's page number, which is set to the argument value for {@link #ARG_PAGE}.
-     */
     private int  mPosition;
-
-    private static int mTotal;
 
     private static Context sContext;
 
-    /**
-     * Factory method for this fragment class. Constructs a new fragment for the given page number.
-     */
-    public static ScreenSlidePageFragment create(Context context, int total, int position) {
-        ScreenSlidePageFragment fragment = new ScreenSlidePageFragment();
+    public static ItemDetailFragment create(Context context, int position) {
+        ItemDetailFragment fragment = new ItemDetailFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, position);
         fragment.setArguments(args);
-        mTotal = total;
         sContext = context;
         return fragment;
     }
 
-    public ScreenSlidePageFragment() {
+    public ItemDetailFragment() {
     }
 
     @Override
@@ -80,7 +71,9 @@ public class ScreenSlidePageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        // Inflate the layout containing a title and body text.
+        /*
+         * Inflate the layout based on the current product details
+         */
 
         ProductDataModel product = CacheUtil.getInstance().getProduct(CacheUtil.getInstance().getProductId(mPosition));
 
@@ -114,13 +107,20 @@ public class ScreenSlidePageFragment extends Fragment {
         loader.get(product.getProductImage(), ImageLoader.getImageListener(imageView,
                 R.mipmap.ic_launcher, R.mipmap.ic_launcher));
 
-        return rootView;
-    }
+        TextView ratingCountView = (TextView) rootView.findViewById(R.id.rating_count);
 
-    /**
-     * Returns the page number represented by this fragment object.
-     */
-    public int getPageNumber() {
-        return mTotal;
+        ratingCountView.setText("("+String.valueOf(product.getReviewCount()+")"));
+
+        RatingBar bar = (RatingBar) rootView.findViewById(R.id.ratingBar);
+
+        bar.setRating((int) product.getReviewRating());
+        bar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+
+        return rootView;
     }
 }

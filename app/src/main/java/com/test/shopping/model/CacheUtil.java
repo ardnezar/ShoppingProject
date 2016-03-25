@@ -3,6 +3,8 @@ package com.test.shopping.model;
 import android.util.Log;
 import android.util.LruCache;
 
+import com.test.shopping.BuildConfig;
+
 import java.util.ArrayList;
 
 /**
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 public class CacheUtil {
 
     private static CacheUtil sInstance;
-    private static final String TAG = "ProductCacheUtil";
+    private static final String TAG = "ShoppingCacheUtil";
 
     private CacheUtil(){
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
@@ -40,7 +42,6 @@ public class CacheUtil {
     }
 
     public void addProduct(String key, ProductDataModel product) {
-        Log.d(TAG, "addProduct..Product key:"+key);
         if (getProduct(key) == null) {
             mProductCache.put(key, product);
         }
@@ -51,10 +52,8 @@ public class CacheUtil {
     }
 
     public void addProductId(String productId) {
-        Log.d(TAG, "addProductId..Product key:"+productId);
-        if (!mProductIdList.contains(productId)) {
-            mProductIdList.add(productId);
-        }
+//        if(BuildConfig.DEBUG)Log.d(TAG, "addProductId..Product key:"+productId+",mProductIdList.size():"+mProductIdList.size());
+        mProductIdList.add(productId);
     }
 
     public String getProductId(int index) {
@@ -63,9 +62,11 @@ public class CacheUtil {
 
     public int getProductListSize() {
         int count =  (mProductIdList != null ? mProductIdList.size():0);
-        Log.d(TAG, "getProductListSize..count:"+count);
+//        if(BuildConfig.DEBUG)Log.d(TAG, "getProductListSize..count:"+count);
         return count;
     }
+
+
 
     public void cleanup() {
         if(mProductCache != null) {

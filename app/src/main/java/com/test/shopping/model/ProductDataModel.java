@@ -2,14 +2,9 @@ package com.test.shopping.model;
 
 /**
  * Created by sujoy on 3/22/16.
- * This model describes each Item
+ * This model has details of each Product
  */
 public class ProductDataModel {
-
-
-    public String getProductId() {
-        return mProductId;
-    }
 
     public String getProductName() {
         return mProductName;
