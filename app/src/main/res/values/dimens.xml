@@ -8,4 +8,5 @@
     <dimen name="item_margin">15dp</dimen>
     <dimen name="rating_count_item_margin">10dp</dimen>
     <dimen name="item_page_tab_left_padding">50dp</dimen>
+    <dimen name="listing_progress_bar">100dp</dimen>
 </resources>

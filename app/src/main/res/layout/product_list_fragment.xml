@@ -4,14 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/app_background">
-    <!--<android.support.v7.widget.Toolbar-->
-        <!--android:id="@+id/my_toolbar"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="?attr/actionBarSize"-->
-        <!--android:background="?attr/colorPrimary"-->
-        <!--android:elevation="4dp"-->
-        <!--android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
-        <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>-->
     <LinearLayout
         android:id="@+id/list_container"
         android:layout_width="match_parent"
@@ -25,7 +17,7 @@
             android:orientation="vertical">
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:gravity="center_vertical"
                 android:layout_marginLeft="@dimen/item_margin"
                 android:text="@string/product_list_label"
@@ -35,17 +27,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray" />
-            <GridView
-                android:id="@+id/gridview"
+            <ListView
+                android:id="@+id/listView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:columnWidth="400dp"
-                android:numColumns="auto_fit"
-                android:verticalSpacing="10dp"
-                android:horizontalSpacing="10dp"
-                android:stretchMode="columnWidth"
-                android:gravity="center"
-                />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@android:color/white"
+                android:divider="@android:color/darker_gray"
+                android:dividerHeight="1dip"/>
 
         </LinearLayout>
 
@@ -57,7 +47,7 @@
         android:layout_gravity="center"
         android:visibility="visible">
         <ProgressBar
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
+            android:layout_width="@dimen/listing_progress_bar"
+            android:layout_height="@dimen/listing_progress_bar" />
     </LinearLayout>
 </FrameLayout>

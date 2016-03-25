@@ -12,7 +12,7 @@ import android.support.v7.widget.Toolbar;
 import com.test.shopping.R;
 import com.test.shopping.model.CacheUtil;
 
-public class ItemDetailActivity extends FragmentActivity {
+public class ProductDetailActivity extends FragmentActivity {
 
     public static final String ITEM_INDEX = "item_index";
 
@@ -55,7 +55,7 @@ public class ItemDetailActivity extends FragmentActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return ItemDetailFragment.create(ItemDetailActivity.this, position);
+            return ProductDetailFragment.create(ProductDetailActivity.this, position);
         }
 
         @Override

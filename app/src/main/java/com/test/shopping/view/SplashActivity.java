@@ -25,7 +25,7 @@ public class SplashActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
                 Intent intent = new Intent(SplashActivity.this
-                        , MainActivity.class);
+                        , ProductListingActivity.class);
                 startActivity(intent);
                 finish();
         }

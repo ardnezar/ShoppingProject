@@ -27,7 +27,7 @@ import com.test.shopping.connectionmodule.WebHandlerRequestCallback;
 /**
  * This Fragment is the container of the listview of the products in the Phone device
  */
-public class MainFragment extends Fragment {
+public class ProductListingFragment extends Fragment {
 
     public static final String TAG = "ShoppingMainFragment";
 
@@ -49,7 +49,7 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         ViewGroup rootView = (ViewGroup) inflater
-                .inflate(R.layout.fragment_main, container, false);
+                .inflate(R.layout.product_list_fragment, container, false);
 
         mProgressContainer = (LinearLayout) rootView.findViewById(R.id.progress_layout);
         mProgressContainer.setVisibility(View.VISIBLE);

@@ -19,7 +19,6 @@ package com.test.shopping.view;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,7 +41,7 @@ import org.jsoup.safety.Whitelist;
  * A fragment representing a single page in the view pager showing details of each item.
  *
  */
-public class ItemDetailFragment extends Fragment {
+public class ProductDetailFragment extends Fragment {
 
     public static final String ARG_PAGE = "page";
 
@@ -50,8 +49,8 @@ public class ItemDetailFragment extends Fragment {
 
     private static Context sContext;
 
-    public static ItemDetailFragment create(Context context, int position) {
-        ItemDetailFragment fragment = new ItemDetailFragment();
+    public static ProductDetailFragment create(Context context, int position) {
+        ProductDetailFragment fragment = new ProductDetailFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, position);
         fragment.setArguments(args);
@@ -59,7 +58,7 @@ public class ItemDetailFragment extends Fragment {
         return fragment;
     }
 
-    public ItemDetailFragment() {
+    public ProductDetailFragment() {
     }
 
     @Override
@@ -79,7 +78,7 @@ public class ItemDetailFragment extends Fragment {
 
 
         ViewGroup rootView = (ViewGroup) inflater
-                .inflate(R.layout.product_item, container, false);
+                .inflate(R.layout.product_detail, container, false);
 
 
         TextView productName = (TextView) rootView.findViewById(R.id.product_name);

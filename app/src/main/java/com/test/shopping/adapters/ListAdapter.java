@@ -16,12 +16,9 @@ import com.test.shopping.R;
 import com.test.shopping.connectionmodule.ConnectionUtil;
 import com.test.shopping.model.CacheUtil;
 import com.test.shopping.model.ProductDataModel;
-import com.test.shopping.view.ItemDetailActivity;
+import com.test.shopping.view.ProductDetailActivity;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by sd250307 on 3/9/16.
@@ -66,7 +63,7 @@ public class ListAdapter extends BaseAdapter {
         ViewHolder holder;
         if(convertView == null) {
             holder = new ViewHolder();
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item, null);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.product_list_item, null);
             holder.productName = (TextView) convertView.findViewById(R.id.product_name);
             holder.image = (ImageView) convertView.findViewById(R.id.image);
             holder.price = (TextView) convertView.findViewById(R.id.price);
@@ -88,8 +85,8 @@ public class ListAdapter extends BaseAdapter {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, ItemDetailActivity.class);
-                intent.putExtra(ItemDetailActivity.ITEM_INDEX, position);
+                Intent intent = new Intent(mContext, ProductDetailActivity.class);
+                intent.putExtra(ProductDetailActivity.ITEM_INDEX, position);
                 mContext.startActivity(intent);
             }
         });

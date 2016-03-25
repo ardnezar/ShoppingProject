@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <!--<fragment class="com.test.shopping.view.MainFragment"-->
+    <!--<fragment class="com.test.shopping.view.ProductListingFragmentngFragment"-->
         <!--android:id="@+id/list_frag"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent"/>-->
