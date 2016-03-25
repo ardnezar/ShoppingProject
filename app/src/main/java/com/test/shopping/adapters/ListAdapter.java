@@ -76,8 +76,7 @@ public class ListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        String productId = CacheUtil.getInstance().getProductId(position);
-        ProductDataModel product = CacheUtil.getInstance().getProduct(productId);
+        ProductDataModel product = CacheUtil.getInstance().getProduct(position);
         holder.productName.setText(StringEscapeUtils.unescapeJava(product.getProductName()));
         holder.price.setText(product.getPrice());
         holder.count.setText("("+String.valueOf(product.getReviewCount()+")"));

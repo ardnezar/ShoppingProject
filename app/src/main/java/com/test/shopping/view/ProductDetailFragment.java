@@ -38,7 +38,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
 /**
- * A fragment representing a single page in the view pager showing details of each item.
+ * A fragment representing a single page in the view pager showing details of each product.
  *
  */
 public class ProductDetailFragment extends Fragment {
@@ -71,10 +71,10 @@ public class ProductDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         /*
-         * Inflate the layout based on the current product details
+         * Inflate the layout based on the current product details.
+         * Fetch the product associated with the current position in product id list
          */
-
-        ProductDataModel product = CacheUtil.getInstance().getProduct(CacheUtil.getInstance().getProductId(mPosition));
+        ProductDataModel product = CacheUtil.getInstance().getProduct(mPosition);
 
 
         ViewGroup rootView = (ViewGroup) inflater

@@ -23,7 +23,8 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import java.util.ArrayList;
 
 /**
- * Created by sujoy on 3/9/16.
+ * Created by sujoy on 3/22/16.
+ * Adapter to show product listing in a gridview on the tablets
  */
 public class GridAdapter extends BaseAdapter {
 
@@ -48,6 +49,9 @@ public class GridAdapter extends BaseAdapter {
         return 0;
     }
 
+    /*
+     * View holder class to store layout views for fast scrolling
+     */
     static class ViewHolder {
         TextView productName;
         TextView price;
@@ -74,8 +78,11 @@ public class GridAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        String productId = CacheUtil.getInstance().getProductId(position);
-        ProductDataModel product = CacheUtil.getInstance().getProduct(productId);
+        /*
+         * Get the product based on the current position of the gridview item
+         */
+        ProductDataModel product = CacheUtil.getInstance().getProduct(position);
+
         holder.productName.setText(StringEscapeUtils.unescapeJava(product.getProductName()));
         holder.price.setText(product.getPrice());
         holder.count.setText("("+String.valueOf(product.getReviewCount()+")"));

@@ -23,7 +23,7 @@ public class ProductPageRequestListener implements com.android.volley.Response.L
 
     private WebHandlerRequestCallback mDataCallback;
 
-    // Product based nodes as returned by Product Page API
+    // Product based tags as returned by Product Page API
 
     private static final String TAG_PRODUCTS = "products";
     private static final String TAG_PRODUCT_ID = "productId";
@@ -60,7 +60,7 @@ public class ProductPageRequestListener implements com.android.volley.Response.L
             try {
                 JSONObject jsonObj = new JSONObject(resp);
                 JSONArray products = jsonObj.getJSONArray(TAG_PRODUCTS);
-                //If behaviors element is not empty then update the database with the behaviors
+                //If product element is not empty then update the app caches with the product details
                 if (products != null && products.length() > 0) {
 
                     //Loop through all the products
@@ -115,8 +115,6 @@ public class ProductPageRequestListener implements com.android.volley.Response.L
                             if (product != null) {
                                 CacheUtil.getInstance().addProduct(productId, product);
                             }
-
-
                         }
                     }
                 }

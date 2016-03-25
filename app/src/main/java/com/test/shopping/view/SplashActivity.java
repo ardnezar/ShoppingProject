@@ -1,16 +1,21 @@
 package com.test.shopping.view;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class SplashActivity extends AppCompatActivity {
+/*
+ * This is the launcher activity to show a splash page to the user when he launched the app in
+ * cold mode.
+ */
 
-    //Delay the Splash page for 3 seconds
-    private static final int SPLASH_DELAY = 3000;
+public class SplashActivity extends Activity {
+
+    //Delay the Splash page for 2 seconds
+    private static final int SPLASH_DELAY = 2 * 1000;
 
     private static final int START_MESSAGE = 1001;
 

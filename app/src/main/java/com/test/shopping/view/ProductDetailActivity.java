@@ -11,6 +11,12 @@ import android.os.Bundle;
 import com.test.shopping.R;
 import com.test.shopping.model.CacheUtil;
 
+/*
+ * This is a container activity to show product details in a horizontal paged structure
+ * A view pager and associated pager adaper is used to make this work.
+ *
+ */
+
 public class ProductDetailActivity extends FragmentActivity {
 
     public static final String ITEM_INDEX = "item_index";
@@ -30,18 +36,14 @@ public class ProductDetailActivity extends FragmentActivity {
         mPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new ItemDetailPagerAdapter(this.getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
-        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                invalidateOptionsMenu();
-            }
-        });
+        mPagerAdapter.notifyDataSetChanged();
         mPager.setCurrentItem(index);
     }
 
     /**
      * A pager adapter creates a fragment and shows the product details.
-     * To be done: Recycling the frames in the pager adapter
+     * We handle the horizontal swipe through the product detailed views by implementing view pager
+     * and an associated pager adapter
      */
     private class ItemDetailPagerAdapter extends FragmentStatePagerAdapter {
         public ItemDetailPagerAdapter(FragmentManager fm) {

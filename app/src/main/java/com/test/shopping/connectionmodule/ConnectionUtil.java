@@ -31,6 +31,10 @@ public class ConnectionUtil {
         mContext = context;
         mRequestQueue = getRequestQueue();
 
+        /*
+         * ImageLoader is initialized with an internal cahche to store Bitmaps associated with
+         * the product image
+         */
         mImageLoader = new ImageLoader(mRequestQueue,
                 new ImageLoader.ImageCache() {
                     private final LruCache<String, Bitmap>
@@ -49,14 +53,23 @@ public class ConnectionUtil {
         mCurrentPage = 0;
     }
 
-    public static synchronized ConnectionUtil getInstance(Context context) {
+    public static ConnectionUtil getInstance(Context context) {
         if (sInstance == null) {
-            sInstance = new ConnectionUtil(context);
+            synchronized (ConnectionUtil.class) {
+                /*
+                 * Additional validation before creating the static instance is required, as the
+                 * previous thread might have already initialized this instance
+                 */
+
+                if (sInstance == null) {
+                    sInstance = new ConnectionUtil(context);
+                }
+            }
         }
         return sInstance;
     }
 
-    public RequestQueue getRequestQueue() {
+    private RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
             mRequestQueue = Volley.newRequestQueue(mContext.getApplicationContext());
         }
@@ -71,6 +84,9 @@ public class ConnectionUtil {
         return mImageLoader;
     }
 
+    /*
+     * This methdd creates a volley web request and push the request to the volley queue
+     */
     public void sendProductRequest(WebHandlerRequestCallback callback) {
         String url = AppConstants.URL_BASE_DEBUG + AppConstants.PRODUCT_LIST;
         url = String.format(url, AppConstants.API_KEY, ++mCurrentPage, MAX_PAGE_SIZE);

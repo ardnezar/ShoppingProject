@@ -24,7 +24,8 @@ import com.test.shopping.connectionmodule.ConnectionUtil;
 import com.test.shopping.connectionmodule.WebHandlerRequestCallback;
 
 /**
- * This Fragment is the container of the listview of the products in the Phone device
+ * This Fragment is the container of the list view of the products on the device
+ * This supports listing the products on both the phone and the tablet based screen size
  */
 public class ProductListingFragment extends Fragment {
 
@@ -44,6 +45,8 @@ public class ProductListingFragment extends Fragment {
     private boolean mLoadingMore = false;
 
     private static final int MORE_DATA_REQUEST = 1;
+    // We delay the data fetch for 1 second. In case user decides to scroll back and not interested
+    // in new content
     private static final int DATA_REQUEST_DELAY = 1 * 1000;
 
     @Override
@@ -59,124 +62,81 @@ public class ProductListingFragment extends Fragment {
         mListView = (ListView) rootView.findViewById(R.id.listView);
 
         if(mListView != null) {
+            // This is Phone device.
             mListAdapter = new ListAdapter(getActivity());
             mListView.setAdapter(mListAdapter);
             mFooterView = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).
                     inflate(R.layout.lazy_loading_footer, null, false);
 
-            mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
-
-                @Override
-                public void onScroll(AbsListView absListView, int firstVisibleItem,
-                                     int visibleItemCount,
-                                     int totalItemCount) {
-                    mCurrentFirstVisibleItem = firstVisibleItem;
-                    mCurrentVisibleItemCount = visibleItemCount;
-                    mTotalItemCount = totalItemCount;
-                }
-
-                @Override
-                public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-                    mCurrentScrollState = scrollState;
-                    isScrollCompleted();
-                }
-
-                private void isScrollCompleted() {
-                    if (BuildConfig.DEBUG)
-                        Log.d(TAG, "isScrollCompleted...mCurrentVisibleItemCount:" + mCurrentVisibleItemCount + "," +
-                                "mCurrentFirstVisibleItem:" + mCurrentFirstVisibleItem +
-                                ",mCurrentScrollState:" + mCurrentScrollState + ",mTotalItemCount:" + mTotalItemCount);
-                    if (mCurrentVisibleItemCount > 0 &&
-                            mCurrentScrollState == SCROLL_STATE_IDLE &&
-                            mTotalItemCount == (mCurrentFirstVisibleItem + mCurrentVisibleItemCount)) {
-                        if (BuildConfig.DEBUG) Log.d(TAG, "isScrollCompleted..1");
-                    /*
-                     * If the scroll is completed and there is not current loading happening,
-                     * load more content if present
-                     */
-                        if (!mLoadingMore) {
-                            if (BuildConfig.DEBUG) Log.d(TAG, "isScrollCompleted..2");
-                            mLoadingMore = true;
-
-                        /*
-                         * Send a delayed message to fetch content after showing the footer
-                         * That way if user scrolls in the top direction,we don't have to request
-                         * the next set of content based on the user intent to look into already
-                         * listed items in the listview
-                         */
-
-                            mHandler.sendEmptyMessageDelayed(MORE_DATA_REQUEST, DATA_REQUEST_DELAY);
-                        }
-                    } else if (mCurrentScrollState != SCROLL_STATE_IDLE &&
-                            mTotalItemCount != (mCurrentFirstVisibleItem + mCurrentVisibleItemCount + 1)) {
-                        if (BuildConfig.DEBUG) Log.d(TAG, "isScrollCompleted..3");
-                        mLoadingMore = false;
-                        mHandler.removeMessages(MORE_DATA_REQUEST);
-                    }
-                }
-            });
-        }
-
-        mGridView = (GridView) rootView.findViewById(R.id.gridview);
-
-        if(mGridView != null) {
-            mGridAdapter = new GridAdapter(getActivity());
-            mGridView.setAdapter(mGridAdapter);
-            mGridView.setOnScrollListener(new AbsListView.OnScrollListener() {
-
-                @Override
-                public void onScroll(AbsListView absListView, int firstVisibleItem,
-                                     int visibleItemCount,
-                                     int totalItemCount) {
-                    mCurrentFirstVisibleItem = firstVisibleItem;
-                    mCurrentVisibleItemCount = visibleItemCount;
-                    mTotalItemCount = totalItemCount;
-                }
-
-                @Override
-                public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-                    mCurrentScrollState = scrollState;
-                    isScrollCompleted();
-                }
-
-                private void isScrollCompleted() {
-                    if (BuildConfig.DEBUG)
-                        Log.d(TAG, "isScrollCompleted...mCurrentVisibleItemCount:" + mCurrentVisibleItemCount + "," +
-                                "mCurrentFirstVisibleItem:" + mCurrentFirstVisibleItem +
-                                ",mCurrentScrollState:" + mCurrentScrollState + ",mTotalItemCount:" + mTotalItemCount);
-                    if (mCurrentVisibleItemCount > 0 &&
-                            mCurrentScrollState == SCROLL_STATE_IDLE &&
-                            mTotalItemCount == (mCurrentFirstVisibleItem + mCurrentVisibleItemCount)) {
-                        if (BuildConfig.DEBUG) Log.d(TAG, "isScrollCompleted..1");
-                    /*
-                     * If the scroll is completed and there is not current loading happening,
-                     * load more content if present
-                     */
-                        if (!mLoadingMore) {
-                            if (BuildConfig.DEBUG) Log.d(TAG, "isScrollCompleted..2");
-                            mLoadingMore = true;
-
-                        /*
-                         * Send a delayed message to fetch content after showing the footer
-                         * That way if user scrolls in the top direction,we don't have to request
-                         * the next set of content based on the user intent to look into already
-                         * listed items in the listview
-                         */
-
-                            mHandler.sendEmptyMessageDelayed(MORE_DATA_REQUEST, DATA_REQUEST_DELAY);
-                        }
-                    } else if (mCurrentScrollState != SCROLL_STATE_IDLE &&
-                            mTotalItemCount != (mCurrentFirstVisibleItem + mCurrentVisibleItemCount + 1)) {
-                        if (BuildConfig.DEBUG) Log.d(TAG, "isScrollCompleted..3");
-                        mLoadingMore = false;
-                        mHandler.removeMessages(MORE_DATA_REQUEST);
-                    }
-                }
-            });
+            mListView.setOnScrollListener(mScrollListener);
+        } else {
+            // If listview is not valid, this is a tablet. Configure Gridview and associate gridview
+            // adapter
+            mGridView = (GridView) rootView.findViewById(R.id.gridview);
+            if (mGridView != null) {
+                mGridAdapter = new GridAdapter(getActivity());
+                mGridView.setAdapter(mGridAdapter);
+                mGridView.setOnScrollListener(mScrollListener);
+            }
         }
 
         return rootView;
     }
+
+    /*
+     * Implement the scroll listener. This has all the lazy loading code implementation.
+     */
+    private AbsListView.OnScrollListener mScrollListener = new AbsListView.OnScrollListener() {
+
+        @Override
+        public void onScroll(AbsListView absListView, int firstVisibleItem,
+                             int visibleItemCount,
+                             int totalItemCount) {
+            mCurrentFirstVisibleItem = firstVisibleItem;
+            mCurrentVisibleItemCount = visibleItemCount;
+            mTotalItemCount = totalItemCount;
+        }
+
+        @Override
+        public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+            mCurrentScrollState = scrollState;
+            isScrollCompleted();
+        }
+
+        private void isScrollCompleted() {
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, "isScrollCompleted...mCurrentVisibleItemCount:" + mCurrentVisibleItemCount + "," +
+                        "mCurrentFirstVisibleItem:" + mCurrentFirstVisibleItem +
+                        ",mCurrentScrollState:" + mCurrentScrollState + ",mTotalItemCount:" + mTotalItemCount);
+            if (mCurrentVisibleItemCount > 0 &&
+                    mCurrentScrollState == SCROLL_STATE_IDLE &&
+                    mTotalItemCount == (mCurrentFirstVisibleItem + mCurrentVisibleItemCount)) {
+                if (BuildConfig.DEBUG) Log.d(TAG, "isScrollCompleted..1");
+                    /*
+                     * If the scroll is completed and there is not current loading happening,
+                     * load more content if present
+                     */
+                if (!mLoadingMore) {
+                    if (BuildConfig.DEBUG) Log.d(TAG, "isScrollCompleted..2");
+                    mLoadingMore = true;
+
+                        /*
+                         * Send a delayed message to fetch content after showing the footer
+                         * That way if user scrolls in the top direction,we don't have to request
+                         * the next set of content based on the user intent to look into already
+                         * listed items in the listview
+                         */
+
+                    mHandler.sendEmptyMessageDelayed(MORE_DATA_REQUEST, DATA_REQUEST_DELAY);
+                }
+            } else if (mCurrentScrollState != SCROLL_STATE_IDLE &&
+                    mTotalItemCount != (mCurrentFirstVisibleItem + mCurrentVisibleItemCount + 1)) {
+                if (BuildConfig.DEBUG) Log.d(TAG, "isScrollCompleted..3");
+                mLoadingMore = false;
+                mHandler.removeMessages(MORE_DATA_REQUEST);
+            }
+        }
+    };
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -199,10 +159,16 @@ public class ProductListingFragment extends Fragment {
 
     private boolean mConfigChange = false;
 
+    //This method will send the product content request to connection module
     private void sendProductRequest() {
         ConnectionUtil.getInstance(getActivity()).sendProductRequest(new WebHandlerRequestCallback() {
             @Override
             public void updateData() {
+                /*
+                 * Once the content is updated we get this callback and we update the product lists
+                 * accordingly.
+                 */
+
                 if(BuildConfig.DEBUG)Log.d(TAG, "updateData");
                 mLoadingMore = false;
                 if(mListView != null) {
@@ -214,12 +180,14 @@ public class ProductListingFragment extends Fragment {
                 if(mGridAdapter != null) {
                     mGridAdapter.notifyDataSetChanged();
                 }
+                // In case the progress dialog is being shown, remove it after getting the content
+                // and make the list content visible
                 mProgressContainer.setVisibility(View.GONE);
                 mListContainer.setVisibility(View.VISIBLE);
                 if(mListView!= null) {
+                    //Footer for lazy loading is only applicable for listview on phone for now
                     mListView.addFooterView(mFooterView);
                 }
-
             }
 
             @Override
