@@ -14,11 +14,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 /**
- * Created by sdas on 3/23/16.
+ * Created by sujoy on 3/23/16.
  */
 public class ProductPageRequestListener implements com.android.volley.Response.Listener, com.android.volley.Response.ErrorListener {
 

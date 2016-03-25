@@ -21,7 +21,7 @@ import com.test.shopping.view.ProductDetailActivity;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
- * Created by sd250307 on 3/9/16.
+ * Created by sujoy on 3/9/16.
  */
 public class ListAdapter extends BaseAdapter {
     private Context mContext;
@@ -54,6 +54,7 @@ public class ListAdapter extends BaseAdapter {
         ImageView image;
         TextView count;
         RatingBar bar;
+        TextView inStock;
     }
 
 
@@ -69,6 +70,7 @@ public class ListAdapter extends BaseAdapter {
             holder.price = (TextView) convertView.findViewById(R.id.price);
             holder.count = (TextView) convertView.findViewById(R.id.rating_count);
             holder.bar = (RatingBar) convertView.findViewById(R.id.ratingBar);
+            holder.inStock = (TextView) convertView.findViewById(R.id.inStock);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -79,6 +81,14 @@ public class ListAdapter extends BaseAdapter {
         holder.productName.setText(StringEscapeUtils.unescapeJava(product.getProductName()));
         holder.price.setText(product.getPrice());
         holder.count.setText("("+String.valueOf(product.getReviewCount()+")"));
+
+        if(product.isInStock()) {
+            holder.inStock.setTextColor(mContext.getResources().getColor(android.R.color.holo_green_dark));
+            holder.inStock.setText(R.string.in_stock_label);
+        } else {
+            holder.inStock.setTextColor(mContext.getResources().getColor(android.R.color.holo_red_dark));
+            holder.inStock.setText(R.string.out_of_stock_label);
+        }
         ImageLoader loader = ConnectionUtil.getInstance(mContext.getApplicationContext()).getImageLoader();
         loader.get(product.getProductImage(), ImageLoader.getImageListener(holder.image,
                 R.mipmap.ic_launcher, R.mipmap.ic_launcher));

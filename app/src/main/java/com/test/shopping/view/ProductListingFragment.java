@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-//import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +42,9 @@ public class ProductListingFragment extends Fragment {
     private int mTotalItemCount = 0;
     private int mCurrentScrollState = 0;
     private boolean mLoadingMore = false;
+
+    private static final int MORE_DATA_REQUEST = 1;
+    private static final int DATA_REQUEST_DELAY = 1 * 1000;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -109,9 +111,6 @@ public class ProductListingFragment extends Fragment {
                             mTotalItemCount != (mCurrentFirstVisibleItem + mCurrentVisibleItemCount + 1)) {
                         if (BuildConfig.DEBUG) Log.d(TAG, "isScrollCompleted..3");
                         mLoadingMore = false;
-//                        if (mListView != null) {
-//                            mListView.removeFooterView(mFooterView);
-//                        }
                         mHandler.removeMessages(MORE_DATA_REQUEST);
                     }
                 }
@@ -179,8 +178,6 @@ public class ProductListingFragment extends Fragment {
         return rootView;
     }
 
-    private static final int MORE_DATA_REQUEST = 1;
-    private static final int DATA_REQUEST_DELAY = 5 * 1000;
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message inputMessage) {

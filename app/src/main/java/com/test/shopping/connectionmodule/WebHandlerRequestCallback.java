@@ -1,7 +1,7 @@
 package com.test.shopping.connectionmodule;
 
 /**
- * Created by sdas on 3/23/16.
+ * Created by sujoy on 3/23/16.
  */
 public interface WebHandlerRequestCallback {
     void updateData();

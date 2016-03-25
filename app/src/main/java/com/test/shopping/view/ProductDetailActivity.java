@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 
 import com.test.shopping.R;
 import com.test.shopping.model.CacheUtil;
@@ -18,8 +17,6 @@ public class ProductDetailActivity extends FragmentActivity {
 
     private ViewPager mPager;
 
-    private Toolbar toolbar;
-
 
     private PagerAdapter mPagerAdapter;
 
@@ -27,8 +24,6 @@ public class ProductDetailActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_detail);
-        toolbar = (Toolbar) findViewById(R.id.tool_bar); // Attaching the layout to the toolbar object
-//        setSupportActionBar(toolbar);
 
         int index = getIntent().getIntExtra(ITEM_INDEX, 0);
 

@@ -13,7 +13,7 @@ import com.test.shopping.AppConstants;
 import com.test.shopping.BuildConfig;
 
 /**
- * Created by sd250307 on 3/9/16.
+ * Created by sujoy on 3/9/16.
  */
 public class ConnectionUtil {
     private static ConnectionUtil sInstance;

@@ -84,18 +84,15 @@ public class ProductDetailFragment extends Fragment {
         TextView productName = (TextView) rootView.findViewById(R.id.product_name);
         productName.setText(StringEscapeUtils.unescapeJava(product.getProductName()));
 
-        String shortDes = product.getShortDescription();
-
-        if(shortDes != null && shortDes.length() > 0) {
-            TextView shortDesc = (TextView) rootView.findViewById(R.id.product_short_desc);
-            shortDesc.setText(Jsoup.clean(shortDes,Whitelist.simpleText()));
-        }
-
         String longDes = product.getLongDescription();
+        TextView longDescLabel = (TextView) rootView.findViewById(R.id.long_description_label);
 
         if(longDes != null && longDes.length() > 0) {
             TextView longDesc = (TextView) rootView.findViewById(R.id.long_description);
             longDesc.setText(Jsoup.clean(longDes, Whitelist.simpleText()));
+            longDescLabel.setVisibility(View.VISIBLE);
+        } else {
+            longDescLabel.setVisibility(View.INVISIBLE);
         }
 
         TextView price = (TextView) rootView.findViewById(R.id.price);
@@ -119,6 +116,15 @@ public class ProductDetailFragment extends Fragment {
                 return true;
             }
         });
+
+        TextView inStock = (TextView) rootView.findViewById(R.id.inStock);
+        if(product.isInStock()) {
+            inStock.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+            inStock.setText(R.string.in_stock_label);
+        } else {
+            inStock.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+            inStock.setText(R.string.out_of_stock_label);
+        }
 
         return rootView;
     }

@@ -8,7 +8,7 @@ import com.test.shopping.BuildConfig;
 import java.util.ArrayList;
 
 /**
- * Created by sd250307 on 3/23/16.
+ * Created by sujoy on 3/23/16.
  *
  * This utility encapsulates  Product Id list and Product Item Cache
  */
