@@ -1,11 +1,13 @@
 package com.test.shopping.model;
 
-import android.util.Log;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.LruCache;
 
-import com.test.shopping.BuildConfig;
-
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by sujoy on 3/23/16.
@@ -15,7 +17,14 @@ import java.util.ArrayList;
 public class CacheUtil {
 
     private static CacheUtil sInstance;
+    private static Context mContext;
     private static final String TAG = "ShoppingCacheUtil";
+    public static final String SORT_TYPE_KEY = "sort_type";
+
+    public static final int SORT_NAME = 0;
+    public static final int SORT_RATING = 1;
+    public static final int SORT_REVIEW_COUNT = 2;
+    public static final int SORT_PRICE = 3;
 
     private CacheUtil(){
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
@@ -35,7 +44,7 @@ public class CacheUtil {
     //A list to store the ProductIds
     private ArrayList<String> mProductIdList;
 
-    public static CacheUtil getInstance() {
+    public static CacheUtil getInstance(Context context) {
         if (sInstance == null) {
             synchronized (CacheUtil.class) {
                 /*
@@ -45,10 +54,54 @@ public class CacheUtil {
 
                 if (sInstance == null) {
                     sInstance = new CacheUtil();
+                    mContext = context;
                 }
             }
         }
         return sInstance;
+    }
+
+    public void updateProductIdList() {
+        SharedPreferences pref = mContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        int sortType = pref.getInt(SORT_TYPE_KEY, SORT_NAME);
+        if(sortType == SORT_NAME) {
+            Collections.sort(mProductIdList, new Comparator<String>() {
+                @Override
+                public int compare(String s, String t1) {
+                    return mProductCache.get(s).getProductName().compareTo(mProductCache.get(t1).getProductName());
+                }
+            });
+        } else if(sortType == SORT_RATING) {
+            try {
+                Collections.sort(mProductIdList, new Comparator<String>() {
+                    @Override
+                    public int compare(String s, String t1) {
+                        return (mProductCache.get(s).getReviewRating() >= mProductCache.get(t1).getReviewRating() ? -1 : 1);
+                    }
+                });
+            } catch(Exception ex){}
+        } else if(sortType == SORT_REVIEW_COUNT) {
+            Collections.sort(mProductIdList, new Comparator<String>() {
+                @Override
+                public int compare(String s, String t1) {
+                    return (mProductCache.get(s).getReviewCount() >= mProductCache.get(t1).getReviewCount() ? -1 : 1);
+                }
+            });
+        } else if(sortType == SORT_PRICE) {
+            Collections.sort(mProductIdList, new Comparator<String>() {
+                @Override
+                public int compare(String s, String t1) {
+                    try {
+                        NumberFormat format = NumberFormat.getCurrencyInstance();
+                        Number n1 = format.parse(mProductCache.get(s).getPrice());
+                        Number n2 = format.parse(mProductCache.get(t1).getPrice());
+                        return (n1.floatValue() <= n2.floatValue() ? -1 : 1);
+                    } catch (Exception ex){
+                        return -1;
+                    }
+                }
+            });
+        }
     }
 
     /*

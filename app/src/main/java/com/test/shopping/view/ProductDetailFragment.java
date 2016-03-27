@@ -74,7 +74,7 @@ public class ProductDetailFragment extends Fragment {
          * Inflate the layout based on the current product details.
          * Fetch the product associated with the current position in product id list
          */
-        ProductDataModel product = CacheUtil.getInstance().getProduct(mPosition);
+        ProductDataModel product = CacheUtil.getInstance(getActivity()).getProduct(mPosition);
 
 
         ViewGroup rootView = (ViewGroup) inflater

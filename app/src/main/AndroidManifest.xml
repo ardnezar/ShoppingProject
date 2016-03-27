@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".view.ProductListingActivity"
-            android:configChanges="orientation|keyboardHidden">
+            android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
         <activity
             android:name="com.test.shopping.view.SplashActivity"
@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.ProductDetailActivity"
-            android:configChanges="orientation|keyboardHidden">
+            android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
     </application>
 

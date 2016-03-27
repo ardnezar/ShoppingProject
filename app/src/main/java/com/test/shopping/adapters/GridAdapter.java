@@ -36,12 +36,12 @@ public class GridAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return CacheUtil.getInstance().getProductListSize();
+        return CacheUtil.getInstance(mContext).getProductListSize();
     }
 
     @Override
     public Object getItem(int position) {
-        return CacheUtil.getInstance().getProductId(position);
+        return CacheUtil.getInstance(mContext).getProductId(position);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class GridAdapter extends BaseAdapter {
         /*
          * Get the product based on the current position of the gridview item
          */
-        ProductDataModel product = CacheUtil.getInstance().getProduct(position);
+        ProductDataModel product = CacheUtil.getInstance(mContext).getProduct(position);
 
         holder.productName.setText(StringEscapeUtils.unescapeJava(product.getProductName()));
         holder.price.setText(product.getPrice());

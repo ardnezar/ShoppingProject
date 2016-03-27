@@ -1,8 +1,6 @@
 package com.test.shopping.connectionmodule;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
 
 import com.android.volley.VolleyError;
@@ -108,12 +106,12 @@ public class ProductPageRequestListener implements com.android.volley.Response.L
                                     inStock);
 
 
-                            CacheUtil.getInstance().addProductId(productId);
+                            CacheUtil.getInstance(mContext).addProductId(productId);
                             /*
                              * Insert Product details in Product Cache
                              */
                             if (product != null) {
-                                CacheUtil.getInstance().addProduct(productId, product);
+                                CacheUtil.getInstance(mContext).addProduct(productId, product);
                             }
                         }
                     }

@@ -2,7 +2,7 @@ package com.test.shopping.view;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.content.res.Configuration;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,9 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 
 import com.test.shopping.BuildConfig;
 import com.test.shopping.R;
@@ -22,6 +24,7 @@ import com.test.shopping.adapters.GridAdapter;
 import com.test.shopping.adapters.ListAdapter;
 import com.test.shopping.connectionmodule.ConnectionUtil;
 import com.test.shopping.connectionmodule.WebHandlerRequestCallback;
+import com.test.shopping.model.CacheUtil;
 
 /**
  * This Fragment is the container of the list view of the products on the device
@@ -43,11 +46,14 @@ public class ProductListingFragment extends Fragment {
     private int mTotalItemCount = 0;
     private int mCurrentScrollState = 0;
     private boolean mLoadingMore = false;
+    private Spinner mSortSpinner;
 
     private static final int MORE_DATA_REQUEST = 1;
     // We delay the data fetch for 1 second. In case user decides to scroll back and not interested
     // in new content
     private static final int DATA_REQUEST_DELAY = 1 * 1000;
+
+    private int mSortType;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,6 +66,14 @@ public class ProductListingFragment extends Fragment {
         mProgressContainer.setVisibility(View.VISIBLE);
         mListContainer = (LinearLayout) rootView.findViewById(R.id.list_container);
         mListView = (ListView) rootView.findViewById(R.id.listView);
+        mSortSpinner = (Spinner) rootView.findViewById(R.id.sort_type);
+
+        final SharedPreferences pref = getActivity().getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+
+
+        mSortType = pref.getInt(CacheUtil.SORT_TYPE_KEY, CacheUtil.SORT_NAME);
+
+
 
         if(mListView != null) {
             // This is Phone device.
@@ -79,6 +93,34 @@ public class ProductListingFragment extends Fragment {
                 mGridView.setOnScrollListener(mScrollListener);
             }
         }
+
+        Log.d(TAG, "onItemSelected Called...pos:" + mSortSpinner);
+
+        mSortSpinner.post(new Runnable() {
+            @Override
+            public void run() {
+                mSortSpinner.setSelection(mSortType);
+            }
+        });
+
+        mSortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+                Log.d(TAG, "onItemSelected Called...pos:" + pos);
+                mSortType = pos;
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putInt(CacheUtil.SORT_TYPE_KEY, pos);
+                editor.commit();
+                CacheUtil.getInstance(getActivity()).updateProductIdList();
+                mHandler.sendEmptyMessageDelayed(UPDATE_SORT, UPDATE_SORT_DELAY);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         return rootView;
     }
@@ -104,20 +146,14 @@ public class ProductListingFragment extends Fragment {
         }
 
         private void isScrollCompleted() {
-            if (BuildConfig.DEBUG)
-                Log.d(TAG, "isScrollCompleted...mCurrentVisibleItemCount:" + mCurrentVisibleItemCount + "," +
-                        "mCurrentFirstVisibleItem:" + mCurrentFirstVisibleItem +
-                        ",mCurrentScrollState:" + mCurrentScrollState + ",mTotalItemCount:" + mTotalItemCount);
             if (mCurrentVisibleItemCount > 0 &&
                     mCurrentScrollState == SCROLL_STATE_IDLE &&
                     mTotalItemCount == (mCurrentFirstVisibleItem + mCurrentVisibleItemCount)) {
-                if (BuildConfig.DEBUG) Log.d(TAG, "isScrollCompleted..1");
                     /*
                      * If the scroll is completed and there is not current loading happening,
                      * load more content if present
                      */
                 if (!mLoadingMore) {
-                    if (BuildConfig.DEBUG) Log.d(TAG, "isScrollCompleted..2");
                     mLoadingMore = true;
 
                         /*
@@ -131,7 +167,6 @@ public class ProductListingFragment extends Fragment {
                 }
             } else if (mCurrentScrollState != SCROLL_STATE_IDLE &&
                     mTotalItemCount != (mCurrentFirstVisibleItem + mCurrentVisibleItemCount + 1)) {
-                if (BuildConfig.DEBUG) Log.d(TAG, "isScrollCompleted..3");
                 mLoadingMore = false;
                 mHandler.removeMessages(MORE_DATA_REQUEST);
             }
@@ -144,20 +179,29 @@ public class ProductListingFragment extends Fragment {
                if(inputMessage.what == MORE_DATA_REQUEST) {
                    if(BuildConfig.DEBUG)Log.d(TAG, "handleMessage..calling sendProductRequest");
                    sendProductRequest();
+               } else {
+                   if(BuildConfig.DEBUG)Log.d(TAG, "List updated on sorting");
+                   if(mListAdapter != null) {
+                       mListAdapter.notifyDataSetChanged();
+                   } else if(mGridAdapter != null) {
+                       mGridAdapter.notifyDataSetChanged();
+                   }
                }
         }
     };
 
+    private static final int UPDATE_SORT = 2001;
+    private static final int UPDATE_SORT_DELAY = 1000;
+
     @Override
     public void onResume() {
         super.onResume();
-        if(!mConfigChange || mListAdapter.getCount() <= 0) {
-            if(BuildConfig.DEBUG)Log.d(TAG, "sending product request");
+        if((mListAdapter != null && mListAdapter.getCount() <= 0) ||
+                (mGridAdapter != null && mGridAdapter.getCount() <= 0)) {
+            if(BuildConfig.DEBUG)Log.d(TAG, "sending product request..");
             sendProductRequest();
         }
     }
-
-    private boolean mConfigChange = false;
 
     //This method will send the product content request to connection module
     private void sendProductRequest() {
@@ -168,6 +212,7 @@ public class ProductListingFragment extends Fragment {
                  * Once the content is updated we get this callback and we update the product lists
                  * accordingly.
                  */
+                CacheUtil.getInstance(getActivity()).updateProductIdList();
 
                 if(BuildConfig.DEBUG)Log.d(TAG, "updateData");
                 mLoadingMore = false;
@@ -196,11 +241,5 @@ public class ProductListingFragment extends Fragment {
                 mListContainer.setVisibility(View.VISIBLE);
             }
         });
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mConfigChange = true;
     }
 }

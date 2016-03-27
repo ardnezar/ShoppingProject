@@ -57,7 +57,7 @@ public class ProductDetailActivity extends FragmentActivity {
 
         @Override
         public int getCount() {
-            return CacheUtil.getInstance().getProductListSize();
+            return CacheUtil.getInstance(ProductDetailActivity.this).getProductListSize();
         }
     }
 

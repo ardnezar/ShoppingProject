@@ -4,4 +4,11 @@
     <string name="out_of_stock_label">Out of stock.</string>
     <string name="product_list_label">Product Listing</string>
     <string name="item_desc_label">Item description</string>
+    <string name="sort_label">Sort Items</string>
+    <string-array name="sort_items">
+        <item>By Name</item>
+        <item>By Ratings</item>
+        <item>By Review count</item>
+        <item>By Price</item>
+    </string-array>
 </resources>

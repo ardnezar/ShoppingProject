@@ -32,12 +32,12 @@ public class ListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return CacheUtil.getInstance().getProductListSize();
+        return CacheUtil.getInstance(mContext).getProductListSize();
     }
 
     @Override
     public Object getItem(int position) {
-        return CacheUtil.getInstance().getProductId(position);
+        return CacheUtil.getInstance(mContext).getProductId(position);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class ListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        ProductDataModel product = CacheUtil.getInstance().getProduct(position);
+        ProductDataModel product = CacheUtil.getInstance(mContext).getProduct(position);
         holder.productName.setText(StringEscapeUtils.unescapeJava(product.getProductName()));
         holder.price.setText(product.getPrice());
         holder.count.setText("("+String.valueOf(product.getReviewCount()+")"));
