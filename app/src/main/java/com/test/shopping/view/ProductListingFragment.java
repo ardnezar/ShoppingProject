@@ -68,7 +68,7 @@ public class ProductListingFragment extends Fragment {
         mListView = (ListView) rootView.findViewById(R.id.listView);
         mSortSpinner = (Spinner) rootView.findViewById(R.id.sort_type);
 
-        final SharedPreferences pref = getActivity().getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        final SharedPreferences pref = getActivity().getSharedPreferences(CacheUtil.PREF_FILE, Context.MODE_PRIVATE);
 
 
         mSortType = pref.getInt(CacheUtil.SORT_TYPE_KEY, CacheUtil.SORT_NAME);
@@ -94,8 +94,6 @@ public class ProductListingFragment extends Fragment {
             }
         }
 
-        Log.d(TAG, "onItemSelected Called...pos:" + mSortSpinner);
-
         mSortSpinner.post(new Runnable() {
             @Override
             public void run() {
@@ -107,7 +105,6 @@ public class ProductListingFragment extends Fragment {
 
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
-                Log.d(TAG, "onItemSelected Called...pos:" + pos);
                 mSortType = pos;
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putInt(CacheUtil.SORT_TYPE_KEY, pos);

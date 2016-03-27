@@ -20,6 +20,7 @@ public class CacheUtil {
     private static Context mContext;
     private static final String TAG = "ShoppingCacheUtil";
     public static final String SORT_TYPE_KEY = "sort_type";
+    public static final String PREF_FILE = "ShoppingPref";
 
     public static final int SORT_NAME = 0;
     public static final int SORT_RATING = 1;
@@ -62,7 +63,7 @@ public class CacheUtil {
     }
 
     public void updateProductIdList() {
-        SharedPreferences pref = mContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        SharedPreferences pref = mContext.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
         int sortType = pref.getInt(SORT_TYPE_KEY, SORT_NAME);
         if(sortType == SORT_NAME) {
             Collections.sort(mProductIdList, new Comparator<String>() {
