@@ -73,7 +73,7 @@ public class ProductListingFragment extends Fragment {
 
         mSortType = pref.getInt(CacheUtil.SORT_TYPE_KEY, CacheUtil.SORT_NAME);
 
-
+        if(BuildConfig.DEBUG)Log.d(TAG, "Sort index:"+mSortType);
 
         if(mListView != null) {
             // This is Phone device.
@@ -101,16 +101,28 @@ public class ProductListingFragment extends Fragment {
             }
         });
 
+        //The spinner is used for sorting product listing
         mSortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
                 mSortType = pos;
+
+                //Store the updated sort category based on user preference
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putInt(CacheUtil.SORT_TYPE_KEY, pos);
                 editor.commit();
+
+                //Call the utility method to update the product Id list based on the new sort category
                 CacheUtil.getInstance(getActivity()).updateProductIdList();
+                if(BuildConfig.DEBUG)Log.d(TAG, "Sort onItemSelected pos:" + pos);
+
+                //Call the handler with a delay of 1 second just to play safe and show the
+                //loading progress bar to show an update in the background to the user
                 mHandler.sendEmptyMessageDelayed(UPDATE_SORT, UPDATE_SORT_DELAY);
+                if(CacheUtil.getInstance(getActivity()).getProductListSize() > 0) {
+                    mProgressContainer.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
@@ -178,6 +190,7 @@ public class ProductListingFragment extends Fragment {
                    sendProductRequest();
                } else {
                    if(BuildConfig.DEBUG)Log.d(TAG, "List updated on sorting");
+                   mProgressContainer.setVisibility(View.GONE);
                    if(mListAdapter != null) {
                        mListAdapter.notifyDataSetChanged();
                    } else if(mGridAdapter != null) {
@@ -196,7 +209,29 @@ public class ProductListingFragment extends Fragment {
         if((mListAdapter != null && mListAdapter.getCount() <= 0) ||
                 (mGridAdapter != null && mGridAdapter.getCount() <= 0)) {
             if(BuildConfig.DEBUG)Log.d(TAG, "sending product request..");
+
+            //Send a new product list request if the cache is currently empty
+            mProgressContainer.setVisibility(View.VISIBLE);
             sendProductRequest();
+        } else {
+            CacheUtil.getInstance(getActivity()).updateProductIdList();
+            if(mListView != null) {
+                mListView.removeFooterView(mFooterView);
+            }
+            if(mListAdapter != null) {
+                mListAdapter.notifyDataSetChanged();
+            }
+            if(mGridAdapter != null) {
+                mGridAdapter.notifyDataSetChanged();
+            }
+            // In case the progress dialog is being shown, remove it after getting the content
+            // and make the list content visible
+            mProgressContainer.setVisibility(View.GONE);
+            mListContainer.setVisibility(View.VISIBLE);
+            if(mListView!= null) {
+                //Footer for lazy loading is only applicable for listview on phone for now
+                mListView.addFooterView(mFooterView);
+            }
         }
     }
 

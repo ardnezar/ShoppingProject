@@ -62,6 +62,9 @@ public class CacheUtil {
         return sInstance;
     }
 
+    /*
+     * This method sorts the product Id list based on the current sort criteria
+     */
     public void updateProductIdList() {
         SharedPreferences pref = mContext.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
         int sortType = pref.getInt(SORT_TYPE_KEY, SORT_NAME);
