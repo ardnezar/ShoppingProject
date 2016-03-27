@@ -8,6 +8,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:background="@drawable/list_item_background"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:paddingLeft="@dimen/item_margin">
 
         <ImageView
@@ -17,7 +20,7 @@
             android:scaleType="centerCrop"
             android:layout_gravity="center_vertical"
             android:src="@mipmap/ic_launcher"/>
-        
+
         <LinearLayout
             android:layout_gravity="center_vertical"
             android:padding="@dimen/item_margin"

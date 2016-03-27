@@ -86,12 +86,13 @@ public class ProductDetailFragment extends Fragment {
 
         String longDes = product.getLongDescription();
         TextView longDescLabel = (TextView) rootView.findViewById(R.id.long_description_label);
-
+        TextView longDesc = (TextView) rootView.findViewById(R.id.long_description);
         if(longDes != null && longDes.length() > 0) {
-            TextView longDesc = (TextView) rootView.findViewById(R.id.long_description);
             longDesc.setText(Jsoup.clean(longDes, Whitelist.simpleText()));
+            longDesc.setVisibility(View.VISIBLE);
             longDescLabel.setVisibility(View.VISIBLE);
         } else {
+            longDesc.setVisibility(View.INVISIBLE);
             longDescLabel.setVisibility(View.INVISIBLE);
         }
 

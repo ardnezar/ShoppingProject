@@ -17,25 +17,27 @@
             android:orientation="vertical">
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="50dp"
                 android:gravity="center_vertical"
-                android:layout_marginLeft="@dimen/item_margin"
+                android:paddingLeft="@dimen/item_margin"
                 android:text="@string/product_list_label"
                 android:textSize="@dimen/availability_size"
-                android:textColor="@android:color/holo_blue_dark" />
+                android:textColor="@android:color/holo_blue_dark"
+                android:background="@drawable/list_item_background"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
+                android:background="@color/list_background_color" />
             <ListView
                 android:id="@+id/listView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:layout_gravity="center_horizontal"
-                android:background="@android:color/white"
-                android:divider="@android:color/darker_gray"
-                android:dividerHeight="1dip"/>
+                android:background="@color/list_background_color"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="2dip"/>
 
         </LinearLayout>
 

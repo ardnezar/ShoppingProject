@@ -102,13 +102,17 @@
 
         <TextView
             android:id="@+id/long_description"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:layout_marginLeft="@dimen/item_margin"
             android:layout_marginRight="@dimen/item_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:textSize="@dimen/item_margin"
-            android:maxLines="50" />
+            android:maxLines="50"
+            android:visibility="gone"
+            android:background="@drawable/element_background"/>
     </LinearLayout>
 
 </ScrollView>
