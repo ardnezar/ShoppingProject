@@ -6,9 +6,9 @@
     <string name="item_desc_label">Item description</string>
     <string name="sort_label">Sort Items</string>
     <string-array name="sort_items">
-        <item>By Name</item>
-        <item>By Ratings</item>
-        <item>By Review count</item>
-        <item>By Price</item>
+        <item>By Name (A-Z)</item>
+        <item>By Ratings (High-Low)</item>
+        <item>By Review count (High-Low)</item>
+        <item>By Price (Low-High)</item>
     </string-array>
 </resources>
