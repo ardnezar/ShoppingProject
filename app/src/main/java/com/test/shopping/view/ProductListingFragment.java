@@ -40,6 +40,7 @@ public class ProductListingFragment extends Fragment {
     private GridView mGridView;
     private LinearLayout mProgressContainer;
     private LinearLayout mListContainer;
+    private LinearLayout mErrorContainer;
     private View mFooterView;
     private int mCurrentFirstVisibleItem = 0;
     private int mCurrentVisibleItemCount = 0;
@@ -65,6 +66,9 @@ public class ProductListingFragment extends Fragment {
         mProgressContainer = (LinearLayout) rootView.findViewById(R.id.progress_layout);
         mProgressContainer.setVisibility(View.VISIBLE);
         mListContainer = (LinearLayout) rootView.findViewById(R.id.list_container);
+        mListContainer.setVisibility(View.GONE);
+        mErrorContainer = (LinearLayout) rootView.findViewById(R.id.error_layout);
+        mErrorContainer.setVisibility(View.GONE);
         mListView = (ListView) rootView.findViewById(R.id.listView);
         mSortSpinner = (Spinner) rootView.findViewById(R.id.sort_type);
 
@@ -260,6 +264,7 @@ public class ProductListingFragment extends Fragment {
                 // In case the progress dialog is being shown, remove it after getting the content
                 // and make the list content visible
                 mProgressContainer.setVisibility(View.GONE);
+                mErrorContainer.setVisibility(View.GONE);
                 mListContainer.setVisibility(View.VISIBLE);
                 if(mListView!= null) {
                     //Footer for lazy loading is only applicable for listview on phone for now
@@ -269,8 +274,9 @@ public class ProductListingFragment extends Fragment {
 
             @Override
             public void updateError() {
+                mErrorContainer.setVisibility(View.VISIBLE);
                 mProgressContainer.setVisibility(View.GONE);
-                mListContainer.setVisibility(View.VISIBLE);
+                mListContainer.setVisibility(View.GONE);
             }
         });
     }

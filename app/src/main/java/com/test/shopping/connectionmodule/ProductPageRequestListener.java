@@ -40,6 +40,7 @@ public class ProductPageRequestListener implements com.android.volley.Response.L
     private static final String TAG_STATUS = "status";
     private static final String TAG_KIND = "kind";
     private static final String TAG_ETAG = "etag";
+    private static final String TAG_ERROR = "etag";
 
 
     private static final String TAG = "ProductPageListener";
@@ -53,76 +54,89 @@ public class ProductPageRequestListener implements com.android.volley.Response.L
     public void onResponse(Object response) {
         if(BuildConfig.DEBUG)Log.d(TAG, "onResponse..response:" + response);
 
+        boolean isErrorResponse = true;
+
         if(response != null) {
             String resp = (String)response;
             try {
                 JSONObject jsonObj = new JSONObject(resp);
-                JSONArray products = jsonObj.getJSONArray(TAG_PRODUCTS);
-                //If product element is not empty then update the app caches with the product details
-                if (products != null && products.length() > 0) {
 
-                    //Loop through all the products
-                    for (int i = 0; i < products.length(); i++) {
-                        JSONObject c = products.getJSONObject(i);
+                if(jsonObj.has(TAG_ERROR) || !jsonObj.has(TAG_PRODUCTS)) {
+                    //There is an error in the server
+                } else {
+                    isErrorResponse = false;
+                    JSONArray products = jsonObj.getJSONArray(TAG_PRODUCTS);
+                    //If product element is not empty then update the app caches with the product details
+                    if (products != null && products.length() > 0) {
 
-                        String productName = null;
-                        String shortDesc = null;
-                        String longDesc = null;
-                        String price = null;
-                        String image = null;
-                        double rating = 0;
-                        int count = 0;
-                        boolean inStock = false;
+                        //Loop through all the products
+                        for (int i = 0; i < products.length(); i++) {
+                            JSONObject c = products.getJSONObject(i);
 
-                        String productId = c.getString(TAG_PRODUCT_ID);
-                        if(productId != null) {
-                            if(c.has(TAG_PRODUCT_NAME)) {
-                                productName = c.getString(TAG_PRODUCT_NAME);
-                            }
-                            if(c.has(TAG_SHORT_DESC)) {
-                                shortDesc = c.getString(TAG_SHORT_DESC);
-                            }
-                            if(c.has(TAG_LONG_DESC)) {
-                                longDesc = c.getString(TAG_LONG_DESC);
-                            }
-                            if(c.has(TAG_PRICE)) {
-                                price = c.getString(TAG_PRICE);
-                            }
-                            if(c.has(TAG_PROD_IMAGE)) {
-                                image = c.getString(TAG_PROD_IMAGE);
-                            }
-                            rating = c.getDouble(TAG_REVIEW_RATING);
-                            count = c.getInt(TAG_REVIEW_COUNT);
-                            inStock = c.getBoolean(TAG_IN_STOCK);
+                            String productName = null;
+                            String shortDesc = null;
+                            String longDesc = null;
+                            String price = null;
+                            String image = null;
+                            double rating = 0;
+                            int count = 0;
+                            boolean inStock = false;
 
-                            ProductDataModel product = new ProductDataModel(productId,
-                                    productName,
-                                    shortDesc,
-                                    longDesc,
-                                    price,
-                                    image,
-                                    rating,
-                                    count,
-                                    inStock);
+                            String productId = c.getString(TAG_PRODUCT_ID);
+                            if (productId != null) {
+                                if (c.has(TAG_PRODUCT_NAME)) {
+                                    productName = c.getString(TAG_PRODUCT_NAME);
+                                }
+                                if (c.has(TAG_SHORT_DESC)) {
+                                    shortDesc = c.getString(TAG_SHORT_DESC);
+                                }
+                                if (c.has(TAG_LONG_DESC)) {
+                                    longDesc = c.getString(TAG_LONG_DESC);
+                                }
+                                if (c.has(TAG_PRICE)) {
+                                    price = c.getString(TAG_PRICE);
+                                }
+                                if (c.has(TAG_PROD_IMAGE)) {
+                                    image = c.getString(TAG_PROD_IMAGE);
+                                }
+                                rating = c.getDouble(TAG_REVIEW_RATING);
+                                count = c.getInt(TAG_REVIEW_COUNT);
+                                inStock = c.getBoolean(TAG_IN_STOCK);
+
+                                ProductDataModel product = new ProductDataModel(productId,
+                                        productName,
+                                        shortDesc,
+                                        longDesc,
+                                        price,
+                                        image,
+                                        rating,
+                                        count,
+                                        inStock);
 
 
-                            CacheUtil.getInstance(mContext).addProductId(productId);
+                                CacheUtil.getInstance(mContext).addProductId(productId);
                             /*
                              * Insert Product details in Product Cache
                              */
-                            if (product != null) {
-                                CacheUtil.getInstance(mContext).addProduct(productId, product);
+                                if (product != null) {
+                                    CacheUtil.getInstance(mContext).addProduct(productId, product);
+                                }
                             }
                         }
                     }
-                }
 
-                int pageNumber = jsonObj.getInt(TAG_PAGE_NUMBER);
-                ConnectionUtil.getInstance(mContext).updateCurrent(pageNumber);
+                    int pageNumber = jsonObj.getInt(TAG_PAGE_NUMBER);
+                    ConnectionUtil.getInstance(mContext).updateCurrent(pageNumber);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             } finally {
-                mDataCallback.updateData();
+                if(isErrorResponse) {
+                    mDataCallback.updateError();
+                    CacheUtil.getInstance(mContext).cleanup();
+                } else {
+                    mDataCallback.updateData();
+                }
             }
         }
     }
