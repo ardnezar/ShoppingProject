@@ -40,7 +40,7 @@ public class ProductPageRequestListener implements com.android.volley.Response.L
     private static final String TAG_STATUS = "status";
     private static final String TAG_KIND = "kind";
     private static final String TAG_ETAG = "etag";
-    private static final String TAG_ERROR = "etag";
+    private static final String TAG_ERROR = "error";
 
 
     private static final String TAG = "ProductPageListener";
@@ -61,9 +61,8 @@ public class ProductPageRequestListener implements com.android.volley.Response.L
             try {
                 JSONObject jsonObj = new JSONObject(resp);
 
-                if(jsonObj.has(TAG_ERROR) || !jsonObj.has(TAG_PRODUCTS)) {
-                    //There is an error in the server
-                } else {
+                if(!jsonObj.has(TAG_ERROR) && jsonObj.has(TAG_PRODUCTS)) {
+                    if(BuildConfig.DEBUG)Log.d(TAG, "onResponse..tag products");
                     isErrorResponse = false;
                     JSONArray products = jsonObj.getJSONArray(TAG_PRODUCTS);
                     //If product element is not empty then update the app caches with the product details
@@ -132,9 +131,12 @@ public class ProductPageRequestListener implements com.android.volley.Response.L
                 e.printStackTrace();
             } finally {
                 if(isErrorResponse) {
-                    mDataCallback.updateError();
+                    if(BuildConfig.DEBUG)Log.d(TAG, "onResponse ..onErrorResponse..");
                     CacheUtil.getInstance(mContext).cleanup();
+                    mDataCallback.updateError();
+
                 } else {
+                    if(BuildConfig.DEBUG)Log.d(TAG, "onResponse ..sending updata response..");
                     mDataCallback.updateData();
                 }
             }
@@ -144,6 +146,7 @@ public class ProductPageRequestListener implements com.android.volley.Response.L
     @Override
     public void onErrorResponse(VolleyError volleyError) {
         if(BuildConfig.DEBUG)Log.d(TAG, "onErrorResponse..volleyError:"+volleyError.networkResponse.statusCode);
+        CacheUtil.getInstance(mContext).cleanup();
         mDataCallback.updateError();
     }
 }
