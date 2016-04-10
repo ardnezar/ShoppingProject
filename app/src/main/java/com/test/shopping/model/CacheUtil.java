@@ -65,7 +65,7 @@ public class CacheUtil {
     /*
      * This method sorts the product Id list based on the current sort criteria
      */
-    public void updateProductIdList() {
+    public synchronized void updateProductIdList() {
         SharedPreferences pref = mContext.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
         int sortType = pref.getInt(SORT_TYPE_KEY, SORT_NAME);
         if(sortType == SORT_NAME) {
@@ -111,13 +111,13 @@ public class CacheUtil {
     /*
      * This method is used to insert a product object in the cache
      */
-    public void addProduct(String key, ProductDataModel product) {
+    public synchronized void addProduct(String key, ProductDataModel product) {
         if (getProduct(key) == null) {
             mProductCache.put(key, product);
         }
     }
 
-    private ProductDataModel getProduct(String key) {
+    private synchronized ProductDataModel getProduct(String key) {
         return mProductCache.get(key);
     }
 
@@ -134,7 +134,7 @@ public class CacheUtil {
     /*
      * This method is used to add productId to the productId list
      */
-    public void addProductId(String productId) {
+    public synchronized void addProductId(String productId) {
         mProductIdList.add(productId);
     }
 
@@ -142,15 +142,18 @@ public class CacheUtil {
      * Get productId associated with the position in the product Id list
      */
 
-    public String getProductId(int index) {
-        return mProductIdList.get(index);
+    public synchronized String getProductId(int index) {
+        if(mProductIdList != null && mProductIdList.size() > 0) {
+            return mProductIdList.get(index);
+        }
+        return null;
     }
 
 
     /*
      * This method is used to get the total size of the product list
      */
-    public int getProductListSize() {
+    public synchronized int getProductListSize() {
         int count =  (mProductIdList != null ? mProductIdList.size():0);
         return count;
     }

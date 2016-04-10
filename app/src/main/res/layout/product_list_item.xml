@@ -13,7 +13,7 @@
         android:layout_marginRight="5dp"
         android:paddingLeft="@dimen/item_margin">
 
-        <ImageView
+        <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/image"
             android:layout_width="100dp"
             android:layout_height="100dp"

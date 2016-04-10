@@ -7,11 +7,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.test.shopping.R;
 import com.test.shopping.connectionmodule.ConnectionUtil;
 import com.test.shopping.model.CacheUtil;
@@ -20,8 +20,6 @@ import com.test.shopping.view.ProductDetailActivity;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
-import java.util.ArrayList;
-
 /**
  * Created by sujoy on 3/22/16.
  * Adapter to show product listing in a gridview on the tablets
@@ -29,9 +27,11 @@ import java.util.ArrayList;
 public class GridAdapter extends BaseAdapter {
 
     private Context mContext;
+    private ImageLoader mImageLoader;
 
     public GridAdapter(Context ctx) {
         mContext = ctx;
+        mImageLoader = ConnectionUtil.getInstance(mContext.getApplicationContext()).getImageLoader();
     }
 
     @Override
@@ -55,7 +55,7 @@ public class GridAdapter extends BaseAdapter {
     static class ViewHolder {
         TextView productName;
         TextView price;
-        ImageView image;
+        NetworkImageView image;
         TextView count;
         RatingBar bar;
         TextView inStock;
@@ -68,7 +68,7 @@ public class GridAdapter extends BaseAdapter {
             holder = new ViewHolder();
             convertView = LayoutInflater.from(mContext).inflate(R.layout.product_list_item, null);
             holder.productName = (TextView) convertView.findViewById(R.id.product_name);
-            holder.image = (ImageView) convertView.findViewById(R.id.image);
+            holder.image = (NetworkImageView) convertView.findViewById(R.id.image);
             holder.price = (TextView) convertView.findViewById(R.id.price);
             holder.count = (TextView) convertView.findViewById(R.id.rating_count);
             holder.bar = (RatingBar) convertView.findViewById(R.id.ratingBar);
@@ -86,9 +86,8 @@ public class GridAdapter extends BaseAdapter {
         holder.productName.setText(StringEscapeUtils.unescapeJava(product.getProductName()));
         holder.price.setText(product.getPrice());
         holder.count.setText("("+String.valueOf(product.getReviewCount()+")"));
-        ImageLoader loader = ConnectionUtil.getInstance(mContext.getApplicationContext()).getImageLoader();
-        loader.get(product.getProductImage(), ImageLoader.getImageListener(holder.image,
-                R.mipmap.ic_launcher, R.mipmap.ic_launcher));
+        holder.image.setImageUrl(product.getProductImage(), mImageLoader);
+
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
